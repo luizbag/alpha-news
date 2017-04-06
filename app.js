@@ -14,11 +14,10 @@ var app = express();
 
 var config = require('./config');
 
+mongoose.Promise = require('bluebird');
 mongoose.connect(config.mongoUri[app.settings.env], function(err) {
     if (err) {
         console.log('connection error', err);
-    } else {
-        console.log('connection successfull');
     }
 });
 
