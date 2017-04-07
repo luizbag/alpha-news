@@ -1,0 +1,21 @@
+{
+  "name": "news-feed",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Luiz Gavioli <luizbag@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "angular": "^1.6.4"
+  }
+}
