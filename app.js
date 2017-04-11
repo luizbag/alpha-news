@@ -44,8 +44,7 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-
-
+var posts = require('./routes/posts');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -64,15 +63,7 @@ app.use('/assets', express.static(path.join(__dirname, 'bower_components')));
 
 app.use('/', index);
 app.use('/users', users);
-
-app.use(passport.authenticate('jwt', {
-        session: false
-    }),
-    function(req, res) {
-        next();
-    }
-);
-
+app.use('/posts', posts);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

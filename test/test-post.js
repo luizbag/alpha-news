@@ -74,7 +74,7 @@ describe('Post', function() {
                     res.should.be.json;
                     res.body.should.be.a('object');
                     res.body.should.have.property('_id');
-                    res.body._id.should.equal(p._id);
+                    res.body._id.should.equal(p._id.toString());
                     res.body.should.have.property('title');
                     res.body.title.should.equal(p.title);
                     res.body.should.have.property('url');
