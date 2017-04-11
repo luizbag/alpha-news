@@ -8,6 +8,8 @@ var server = require('../app');
 
 chai.use(chaiHttp);
 
+var mongoose = require('mongoose');
+var config = require('../config');
 var User = require('../models/User');
 
 describe('User', function() {
@@ -23,11 +25,14 @@ describe('User', function() {
 	};
 
 	before(function(done) {
-		User.collection.drop(done);
+		if(mongoose.connection.db) return done();
+		mongoose.connect(config.mongoUri[process.env.NODE_ENV], done);
 	});
 
 	beforeEach(function(done) {
-		User.create(user, done);
+		User.collection.drop(function() {
+			User.create(user, done);
+		});
 	});
 
 	afterEach(function(done) {
