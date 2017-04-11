@@ -10,6 +10,7 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - service mongod start
+          - npm install -g bower
           - npm install
           - bower install
           - npm test
