@@ -5,13 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var passport = require('passport');
-var User = require('./models/User');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
+var auth = require('./auth.js');
 
 var app = express();
-
 var config = require('./config');
 
 mongoose.Promise = require('bluebird');
@@ -22,25 +18,6 @@ mongoose.connect(config.mongoUri[app.settings.env], function(err) {
         console.log('connection successfull');
     }
 });
-
-var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
-opts.secretOrKey = config.secret;
-passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    console.log(jwt_payload);
-    User.findOne({
-        id: jwt_payload.sub
-    }, function(err, user) {
-        if (err) {
-            return done(err, false);
-        }
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
-    });
-}));
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -54,6 +31,7 @@ app.set('view engine', 'pug');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(auth.initialize());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
