@@ -29,7 +29,7 @@ router.post('/login', function(req, res, next) {
             user.comparePassword(req.body.password, function(match) {
                 if (match) {
                     var token = jwt.sign({id: user._id}, cfg.secret);
-                    res.json(token);
+                    res.json({'token': token});
                 } else {
                     res.sendStatus(401);
                 }
