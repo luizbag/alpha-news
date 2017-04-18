@@ -19,7 +19,6 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.post('/', auth.authenticate(), function(req, res, next) {
-    console.log(req.body);
     if (!req.body.title) {
         request(req.body.url, function(err, response, body) {
             const regex = /<title>(.*)<\/title>/g;
@@ -29,12 +28,16 @@ router.post('/', auth.authenticate(), function(req, res, next) {
                     regex.lastIndex++;
                 }
                 req.body.title = m[1];
-                console.log(req.body);
                 Post.create(req.body, function(err, post) {
                     if (err) return next(err);
                     res.json(post);
                 });
             }
+        });
+    } else {
+        Post.create(req.body, function(err, post) {
+            if(err) return next(err);
+            res.json(post);
         });
     }
 });
