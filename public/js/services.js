@@ -5,31 +5,25 @@ app.factory('Post', ['$resource', function($resource) {
 }]);
 
 app.service('AuthService', ['$http', function($http) {
-    this.login = function(email, password, callback) {
-        $http.post('/login', {
-            "email": email,
-            "password": password
-        }).
-        success(function(data, status, headers, config) {
-            callback(data);
-        }).
-        error(function(data, status, headers, config) {
-            var token = "Unauthorized";
-            callback(token);
-        });
+    this.login = function(user, callback) {
+        $http.post('/users/login', user).then(
+            function(data, status, headers, config) {
+                callback(data);
+            },
+            function(data, status, headers, config) {
+                var token = "Unauthorized";
+                callback(token);
+            });
     };
 
-    this.register = function(email, password, callback) {
-        $http.post('/login/register', {
-            "email": email,
-            "password": password
-        }).
-        success(function(data, status, headers, config) {
-            callback(data);
-        }).
-        error(function(data, status, headers, config) {
-            console.log(status);
-        });
+    this.register = function(user, callback) {
+        $http.post('/users', user).then(
+            function(data, status, headers, config) {
+                callback(data);
+            },
+            function(data, status, headers, config) {
+                console.log(status);
+            });
     };
 }]);
 
@@ -61,7 +55,7 @@ app.factory('AuthInterceptor', function(AuthToken) {
         request: function(config) {
             var token = AuthToken.getToken();
             if (token)
-                config.headers.Authorization = token;
+                config.headers.Authorization = 'JWT ' + token;
             return config;
         },
         response: function(response) {

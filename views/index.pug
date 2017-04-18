@@ -1,16 +1,23 @@
 extends layout
 
 block content
-	nav(class="navbar navbar-default navbar-fixed-top" ng-controller="AuthController as authCtrl")
+	div(ng-controller="PostController as postCtrl")
+		nav(class="navbar navbar-default navbar-fixed-top" ng-controller="AuthController as authCtrl")
+			div(class="container")
+				div(class="navbar-header")
+					a(class="navbar-brand" href="/") Alpha news
+				form(class="navbar-form navbar-left" ng-show="authCtrl.isAuthenticated()" ng-submit="postCtrl.submitUrl(url)")
+					div(class="form-group")
+						input(type="text" ng-model="url" class="form-control" placeholder="Link")
+				ul(class="nav navbar-nav navbar-right" ng-show="authCtrl.isAuthenticated()")
+					li
+						a(ng-click="authCtrl.logout()" href="#") Logout
+				form(class="navbar-form navbar-right" role="logon" ng-hide="authCtrl.isAuthenticated()" ng-submit="authCtrl.login(user)")
+					div(class="form-group")
+						input(type="text" ng-model="user.email" class="form-control" placeholder="Email")
+						input(type="password" ng-model="user.password" class="form-control" placeholder="Password")
+					button(type="submit" class="btn btn-default") Submit
 		div(class="container")
-			div(class="navbar-header")
-				a(class="navbar-brand" href="/") Alpha news
-			form(class="navbar-form navbar-right" role="logon" ng-hide="authCtrl.authenticated()")
-				div(class="form-group")
-					input(type="text" class="form-control" placeholder="Email")
-					input(type="password" class="form-control" placeholder="Password")
-				button(type="submit" class="btn btn-default") Submit
-	div(class="container")
-		div(class="row" ng-controller='FeedController as feedCtrl')
-			feed(posts='feedCtrl.posts')
+			div(class="row")
+				feed(posts='postCtrl.posts')
 
