@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    div(class="container" ng-controller="PostController as postCtrl")
+        div(class="row")
+            div(class="col-xs-12 col-md-8 col-md-offset-2")
+                h2 Send an article
+                form(ng-submit="postCtrl.submitUrl(post)")
+                    div(class="form-group")
+                        input(type="text" class="form-control" ng-model="post.title" placeholder="Title")
+                    div(class="form-group")
+                        input(type="text" class="form-control" ng-model="post.url" placeholder="Url")
+                    div(class="form-group")
+                        button(type="submit" class="btn btn-primary" ladda="postCtrl.loading") Submit

@@ -1,6 +1,6 @@
 var app = angular.module('app');
 
-app.controller('AuthController', ['AuthService', 'AuthToken', '$location', function(AuthService, AuthToken, $location) {
+app.controller('AuthController', ['AuthService', 'AuthToken', '$window', function(AuthService, AuthToken, $window) {
 	var ctrl = this;
 
 	ctrl.login = function(user) {
@@ -17,13 +17,13 @@ app.controller('AuthController', ['AuthService', 'AuthToken', '$location', funct
 
 	ctrl.register = function(user) {
 		AuthService.register(user, function(user) {
-			$location.path('/');
+			$window.location.href = '/';
 		});
 	};
 
 	ctrl.logout = function() {
 		AuthToken.removeToken();
-		$location.path('/');
+		$window.location.href = '/';
 	};
 
 	ctrl.isAuthenticated = function() {
@@ -31,21 +31,21 @@ app.controller('AuthController', ['AuthService', 'AuthToken', '$location', funct
 	};
 }]);
 
-app.controller('PostController', ['Post', '$location', function(Post, $location) {
+app.controller('PostController', ['Post', '$window', function(Post, $window) {
 	var ctrl = this;
 
 	ctrl.init = function() {
 		ctrl.posts = Post.query();
 	};
 
-	ctrl.submitUrl = function(url) {
-		var post = {
-			url: url
-		};
-		Post.save(post, function(p) {
-			url = "";
-			ctrl.init();
-		});
+	ctrl.submitUrl = function(post) {
+		if(post) {
+			ctrl.loading = true;
+			Post.save(post, function(p) {
+				ctrl.loading = false;
+				$window.location.href = '/';
+			});
+		}
 	};
 
 	ctrl.init();
