@@ -41,7 +41,7 @@ describe('Post', function() {
 
     beforeEach(function(done) {
         Post.collection.drop(function() {
-            Post.create(post, function() {
+            Post.create(post, function(err, p) {
                 User.collection.drop(function() {
                     User.create(testUser, done);
                 });
@@ -49,8 +49,24 @@ describe('Post', function() {
         });
     });
 
+    var authenticate = function(cb) {
+        chai.request(server)
+            .post('/users/login')
+            .send(testUser)
+            .end(function(err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.have.property('token');
+                cb(res.body.token);
+            });
+    };
+
     afterEach(function(done) {
-        Post.collection.drop(done);
+        Post.collection.drop(function() {
+            User.collection.drop(done);
+        });
     });
 
     it('Should get ALL POSTS in /posts GET', function(done) {
@@ -96,39 +112,32 @@ describe('Post', function() {
                     res.body.should.have.property('replies');
                     res.body.replies.should.be.a('array');
                     res.body.replies.should.have.lengthOf(0);
+                    res.body.should.have.property('points');
+                    res.body.points.should.equal(0);
                     done();
                 });
         });
     });
 
     it('Should create a post in /posts POST with authentication token', function(done) {
-        chai.request(server)
-            .post('/users/login')
-            .send(testUser)
-            .end(function(err, res) {
-                should.not.exist(err);
-                should.exist(res);
-                res.should.have.status(200);
-                res.should.be.json;
-                res.body.should.have.property('token');
-                var token = res.body.token;
-                chai.request(server)
-                    .post('/posts')
-                    .set('Authorization', 'JWT ' + token)
-                    .send(testPost)
-                    .end(function(err, res) {
-                        should.not.exist(err);
-                        should.exist(res);
-                        res.should.have.status(200);
-                        res.should.be.json;
-                        res.body.should.be.a('object');
-                        res.body.should.have.property('title');
-                        res.body.title.should.equal(testPost.title);
-                        res.body.should.have.property('url');
-                        res.body.url.should.equal(testPost.url);
-                        done();
-                    });
-            });
+        authenticate(function(token) {
+            chai.request(server)
+                .post('/posts')
+                .set('Authorization', 'JWT ' + token)
+                .send(testPost)
+                .end(function(err, res) {
+                    should.not.exist(err);
+                    should.exist(res);
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('title');
+                    res.body.title.should.equal(testPost.title);
+                    res.body.should.have.property('url');
+                    res.body.url.should.equal(testPost.url);
+                    done();
+                });
+        });
     });
 
     it('Should not create post in /posts POST without authentication token', function(done) {
@@ -141,5 +150,39 @@ describe('Post', function() {
                 res.should.have.status(401);
                 done();
             });
+    });
+
+    it('Should vote up a post in /posts/:id/vote with authentication token', function(done) {
+        Post.create(testPost, function(err, p) {
+            should.not.exist(err);
+            should.exist(p);
+            authenticate(function(token) {
+                chai.request(server)
+                    .post('/posts/' + p._id + '/vote')
+                    .set('Authorization', 'JWT ' + token)
+                    .send({
+                        vote: 1
+                    })
+                    .end(function(err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('_id');
+                        res.body._id.should.equal(p._id.toString());
+                        res.body.should.have.property('title');
+                        res.body.title.should.equal(p.title);
+                        res.body.should.have.property('url');
+                        res.body.url.should.equal(p.url);
+                        res.body.should.have.property('replies');
+                        res.body.replies.should.be.a('array');
+                        res.body.replies.should.have.lengthOf(0);
+                        res.body.should.have.property('points');
+                        res.body.points.should.equal(1);
+                        done();
+                    });
+            });
+        });
     });
 });

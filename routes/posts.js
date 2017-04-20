@@ -6,10 +6,13 @@ var auth = require('../auth');
 var request = require('request');
 
 router.get('/', function(req, res, next) {
-    Post.find({}, function(err, posts) {
-        if (err) return next(err);
-        res.json(posts);
-    });
+    Post.find({}).sort({
+            points: -1
+        })
+        .exec(function(err, posts) {
+            if (err) return next(err);
+            res.json(posts);
+        });
 });
 
 router.get('/:id', function(req, res, next) {
@@ -37,10 +40,19 @@ router.post('/', auth.authenticate(), function(req, res, next) {
         });
     } else {
         Post.create(req.body, function(err, post) {
-            if(err) return next(err);
+            if (err) return next(err);
             res.json(post);
         });
     }
+});
+
+router.post('/:id/vote', auth.authenticate(), function(req, res, next) {
+    Post.findById(req.params.id, function(err, post) {
+        if (err) return next(err);
+        post.points += req.body.vote;
+        post.save();
+        res.json(post);
+    });
 });
 
 module.exports = router;

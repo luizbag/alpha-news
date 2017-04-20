@@ -31,7 +31,7 @@ app.controller('AuthController', ['AuthService', 'AuthToken', '$window', functio
 	};
 }]);
 
-app.controller('PostController', ['Post', '$window', function(Post, $window) {
+app.controller('PostController', ['Vote', 'Post', '$window', function(Vote, Post, $window) {
 	var ctrl = this;
 
 	ctrl.init = function() {
@@ -46,6 +46,14 @@ app.controller('PostController', ['Post', '$window', function(Post, $window) {
 				$window.location.href = '/';
 			});
 		}
+	};
+
+	ctrl.vote = function(id, n) {
+		Vote.vote(id, n, function(data) {
+			if(data !== 'error') {
+				ctrl.init();
+			}
+		});
 	};
 
 	ctrl.init();

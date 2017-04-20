@@ -4,6 +4,20 @@ app.factory('Post', ['$resource', function($resource) {
     return $resource('/posts/:id');
 }]);
 
+app.service('Vote', ['$http', function($http) {
+    this.vote = function(id, n, callback) {
+        $http.post('/posts/' + id + '/vote', {
+            vote: n
+        }).then(
+            function(data, status, headers, config) {
+                callback(data);
+            },
+            function(data, status, headers, config) {
+                callback('error');
+            });
+    };
+}]);
+
 app.service('AuthService', ['$http', function($http) {
     this.login = function(user, callback) {
         $http.post('/users/login', user).then(
