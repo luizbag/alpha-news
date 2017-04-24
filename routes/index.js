@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var Post = require('../models/Post');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -21,9 +22,12 @@ router.get('/submit', function(req, res, next) {
 });
 
 router.get('/post/:id', function(req, res, next) {
-    res.render('post', {
-        title: 'Post',
-        id: req.params.id
+    Post.findById(req.params.id, function(err, post) {
+        if (err) return next(err);
+        res.render('post', {
+            title: post.title + " | Alpha News",
+            id: post._id
+        });
     });
 });
 
