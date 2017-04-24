@@ -15,11 +15,13 @@ var User = require('../models/User');
 describe('User', function() {
 
     var user = {
+        nickname: 'test',
         email: 'test@test.com',
         password: '123456'
     };
 
     var testUser = {
+        nickname: 'test2',
         email: 'test2@test.com',
         password: '123456'
     };

@@ -54,8 +54,8 @@ app.controller('PostController', ['Reply', 'Vote', 'Post', '$window', function(R
         }
     };
 
-    ctrl.vote = function(id, n) {
-        Vote.vote(id, n, function(data) {
+    ctrl.voteUp = function(id) {
+        Vote.vote(id, function(data) {
             if (data !== 'error') {
                 ctrl.init();
             }

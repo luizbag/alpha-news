@@ -23,6 +23,8 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.post('/', auth.authenticate(), function(req, res, next) {
+    console.log(req.user);
+    req.body.sent_by = req.user.nickname;
     if (!req.body.title) {
         request(req.body.url, function(err, response, body) {
             const regex = /<title>(.*)<\/title>/g;
@@ -47,31 +49,44 @@ router.post('/', auth.authenticate(), function(req, res, next) {
 });
 
 router.post('/:id/vote', auth.authenticate(), function(req, res, next) {
-    Post.findById(req.params.id, function(err, post) {
-        if (err) return next(err);
-        post.points += req.body.vote;
-        post.save(function(err) {
+    Post.findByIdAndUpdate(req.params.id, {
+            $inc: {
+                points: 1
+            }
+        }, {
+            safe: true,
+            upsert: true,
+            new: true
+        },
+        function(err, post) {
             if (err) return next(err);
             res.json(post);
-        });
-    });
+        }
+    );
 });
 
 router.post('/:id/reply', auth.authenticate(), function(req, res, next) {
-    Post.findById(req.params.id, function(err, post) {
-        if (err) {
-            console.log(err);
-            return next(err);
-        }
-        post.replies.push(req.body.reply);
-        post.save(function(err) {
+    var reply = {};
+    reply.text = req.body.reply;
+    reply.author = req.user.nickname;
+    reply.date = new Date().getTime();
+    Post.findByIdAndUpdate(req.params.id, {
+            $push: {
+                replies: reply
+            }
+        }, {
+            safe: true,
+            upsert: true,
+            new: true
+        },
+        function(err, post) {
             if (err) {
                 console.log(err);
                 return next(err);
             }
             res.json(post);
-        });
-    });
+        }
+    );
 });
 
 module.exports = router;

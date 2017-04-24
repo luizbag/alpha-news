@@ -1,4 +1,4 @@
 <div class="col-md-12" ng-repeat='post in postCtrl.posts'>
 	<h2><a href="{{post.url}}">{{post.title}}</a> <small><a href="/post/{{post._id}}">({{post.replies.length}} comments)</a></small></h2>
-	<p class="lead">{{post.points}} <button class="btn btn-success btn-sm" ng-click="postCtrl.vote(post._id, 1)">Up</button> <button class="btn btn-danger btn-sm" ng-click="postCtrl.vote(post._id, -1)">Down</button></p>
+	<p class="lead">{{post.points}} <button class="btn btn-success btn-sm" ng-click="postCtrl.voteUp(post._id)">Up</button></p>
 </div>

@@ -22,9 +22,9 @@ html(ng-app="app")
                 div(class="form-group")
                     input(type="password" ng-model="user.password" class="form-control" placeholder="Password")
                 div(class="form-group")
-                    button(type="submit" class="btn btn-default" ng-click="authCtrl.login(user)") Submit
+                    button(type="submit" class="btn btn-default" ng-click="authCtrl.login(user)") Login
                 div(class="form-group")
-                    button(class="btn btn-default" ng-click="authCtrl.register(user)") Register
+                    a(href="/register" class="btn btn-default") Register
 
     block content
     script(src="/assets/jquery/dist/jquery.min.js")

@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    div(class="container" ng-controller="AuthController as authCtrl")
+        div(class="row")
+            div(class="col-xs-12 col-md-8 col-md-offset-2")
+                h2 Register
+                form(ng-submit="authCtrl.register(user)")
+                    div(class="form-group")
+                        input(type="text" class="form-control" ng-model="user.nickname" placeholder="Nickname")
+                    div(class="form-group")
+                        input(type="email" class="form-control" ng-model="user.email" placeholder="Email")
+                    div(class="form-group")
+                        input(type="password" class="form-control" ng-model="user.password" placeholder="Email")
+                    div(class="form-group")
+                        button(type="submit" class="btn btn-primary") Register

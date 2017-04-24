@@ -21,6 +21,7 @@ describe('Post', function() {
     };
 
     var testUser = {
+        nickname: 'test',
         email: 'test@test.com',
         password: '123456'
     };

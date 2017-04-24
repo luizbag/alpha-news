@@ -8,6 +8,12 @@ router.get('/', function(req, res, next) {
     });
 });
 
+router.get('/register', function(req, res, next) {
+    res.render('register', {
+        title: 'Register - News Feed'
+    });
+});
+
 router.get('/submit', function(req, res, next) {
     res.render('submit', {
         title: 'Send an article - News Feed'

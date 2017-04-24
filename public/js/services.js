@@ -5,10 +5,8 @@ app.factory('Post', ['$resource', function($resource) {
 }]);
 
 app.service('Vote', ['$http', function($http) {
-    this.vote = function(id, n, callback) {
-        $http.post('/posts/' + id + '/vote', {
-            vote: n
-        }).then(
+    this.vote = function(id, callback) {
+        $http.post('/posts/' + id + '/vote').then(
             function(data, status, headers, config) {
                 callback(data);
             },
@@ -20,8 +18,6 @@ app.service('Vote', ['$http', function($http) {
 
 app.service('Reply', ['$http', function($http) {
     this.reply = function(id, reply, callback) {
-        console.log(id);
-        console.log(reply);
         $http.post('/posts/' + id + '/reply', {
             reply: reply
         }).then(
