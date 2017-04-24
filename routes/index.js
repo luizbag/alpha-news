@@ -4,19 +4,19 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', {
-        title: 'News Feed'
+        title: 'Alpha News'
     });
 });
 
 router.get('/login', function(req, res, next) {
     res.render('register', {
-        title: 'Login - News Feed'
+        title: 'Login | Alpha News'
     });
 });
 
 router.get('/submit', function(req, res, next) {
     res.render('submit', {
-        title: 'Send an article - News Feed'
+        title: 'Send an article | Alpha News'
     });
 });
 
