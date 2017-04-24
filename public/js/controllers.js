@@ -60,18 +60,19 @@ app.controller('PostController', ['Reply', 'Vote', 'Post', '$window', function(R
             if (data !== 'error') {
                 ctrl.init();
             } else {
-                $window.location.href = "/login"
+                $window.location.href = "/login";
             }
         });
     };
 
     ctrl.addComment = function(reply) {
-        console.log(reply);
         Reply.reply(ctrl.post._id,
             reply,
             function(data) {
                 if (data !== 'error') {
                     ctrl.init();
+                } else {
+                    $window.location.href = "/login";
                 }
             });
     };
