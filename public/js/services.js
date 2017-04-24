@@ -18,6 +18,24 @@ app.service('Vote', ['$http', function($http) {
     };
 }]);
 
+app.service('Reply', ['$http', function($http) {
+    this.reply = function(id, reply, callback) {
+        console.log(id);
+        console.log(reply);
+        $http.post('/posts/' + id + '/reply', {
+            reply: reply
+        }).then(
+            function(data, status, headers, config) {
+                console.log(data);
+                callback(data);
+            },
+            function(data, status, headers, config) {
+                console.log(data);
+                callback('error');
+            });
+    };
+}]);
+
 app.service('AuthService', ['$http', function($http) {
     this.login = function(user, callback) {
         $http.post('/users/login', user).then(

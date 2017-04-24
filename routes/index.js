@@ -14,4 +14,11 @@ router.get('/submit', function(req, res, next) {
     });
 });
 
+router.get('/post/:id', function(req, res, next) {
+    res.render('post', {
+        title: 'Post',
+        id: req.params.id
+    });
+});
+
 module.exports = router;

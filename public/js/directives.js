@@ -8,3 +8,13 @@ app.directive('feed', function() {
 		templateUrl: '/html/feed.html'
 	};
 });
+
+app.directive('replyList', function() {
+	return {
+		restrict: 'E',
+		scope: {
+			replies: '=replies'
+		},
+		templateUrl: '/html/replies.html'
+	};
+});
