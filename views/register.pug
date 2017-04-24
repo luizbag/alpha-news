@@ -3,7 +3,16 @@ extends layout
 block content
     div(class="container" ng-controller="AuthController as authCtrl")
         div(class="row")
-            div(class="col-xs-12 col-md-8 col-md-offset-2")
+            div(class="col-md-6")
+                h2 Login
+                form(ng-submit="authCtrl.login(luser)")
+                    div(class="form-group")
+                        input(type="email" class="form-control" ng-model="luser.email" placeholder="Email")
+                    div(class="form-group")
+                        input(type="password" class="form-control" ng-model="luser.password" placeholder="Password")
+                    div(class="form-group")
+                        button(type="submit" class="btn btn-primary") Register
+            div(class="col-md-6")
                 h2 Register
                 form(ng-submit="authCtrl.register(user)")
                     div(class="form-group")

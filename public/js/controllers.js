@@ -9,6 +9,7 @@ app.controller('AuthController', ['AuthService', 'AuthToken', '$window', functio
                 AuthToken.setToken(res.data.token);
                 user.email = '';
                 user.password = '';
+                $window.location.href = "/";
             } else {
                 ctrl.error = 'User not found';
             }
@@ -58,12 +59,14 @@ app.controller('PostController', ['Reply', 'Vote', 'Post', '$window', function(R
         Vote.vote(id, function(data) {
             if (data !== 'error') {
                 ctrl.init();
+            } else {
+                $window.location.href = "/login"
             }
         });
     };
 
     ctrl.addComment = function(reply) {
-    	console.log(reply);
+        console.log(reply);
         Reply.reply(ctrl.post._id,
             reply,
             function(data) {
