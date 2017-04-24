@@ -152,6 +152,40 @@ describe('Post', function() {
             });
     });
 
+    it('Should add a reply to a post in /posts/:id/reply with authentication token', function(done) {
+        Post.create(testPost, function(err, p) {
+            should.not.exist(err);
+            should.exist(p);
+            authenticate(function(token) {
+                chai.request(server)
+                    .post('/posts/' + p._id + '/reply')
+                    .set('Authorization', 'JWT ' + token)
+                    .send({
+                        reply: 'Lorem ipsum'
+                    })
+                    .end(function(err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('_id');
+                        res.body._id.should.equal(p._id.toString());
+                        res.body.should.have.property('title');
+                        res.body.title.should.equal(p.title);
+                        res.body.should.have.property('url');
+                        res.body.url.should.equal(p.url);
+                        res.body.should.have.property('replies');
+                        res.body.replies.should.be.a('array');
+                        res.body.replies.should.have.lengthOf(1);
+                        res.body.should.have.property('points');
+                        res.body.points.should.equal(0);
+                        done();
+                    })
+            })
+        })
+    });
+
     it('Should vote up a post in /posts/:id/vote with authentication token', function(done) {
         Post.create(testPost, function(err, p) {
             should.not.exist(err);
