@@ -14,8 +14,12 @@ router.get('/', auth.authenticate(), function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
+    console.log('register');
     User.create(req.body, function(err, user) {
-        if (err) return next(err);
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
         res.json(user);
     });
 });
