@@ -4,7 +4,7 @@ var config = {
 	mongoUri: {
 		development: 'mongodb://localhost/news-feed',
 		test: 'mongodb://localhost/news-feed-test',
-		prod: process.env.MONGOLAB_URI
+		prod: process.env.MONGODB_URI
 	}
 };
 
