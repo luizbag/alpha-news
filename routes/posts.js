@@ -23,7 +23,6 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.post('/', auth.authenticate(), function(req, res, next) {
-    console.log(req.user);
     req.body.sent_by = req.user.nickname;
     if (!req.body.title) {
         request(req.body.url, function(err, response, body) {
