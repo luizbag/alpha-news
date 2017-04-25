@@ -1,57 +1,91 @@
 var app = angular.module('app');
 
-app.factory('Post', ['$resource', function($resource) {
+app.factory('Post', ['$resource', '$http', '$q', function($resource, $http, $q) {
     return $resource('/posts/:id');
 }]);
 
-app.service('Vote', ['$http', function($http) {
-    this.vote = function(id, callback) {
-        $http.post('/posts/' + id + '/vote').then(
-            function(data, status, headers, config) {
-                callback(data);
-            },
-            function(data, status, headers, config) {
-                callback('error');
-            });
+app.factory('Vote', ['$http', '$q', function($http, $q) {
+    return {
+        vote: function(id) {
+            return $http.post('/posts/' + id + '/vote')
+                .then(
+                    function(response) {
+                        if (response.status === 401) {
+                            return $q.reject(response.data);
+                        } else if (typeof response.data === 'object') {
+                            return response.data;
+                        } else {
+                            // invalid response
+                            return $q.reject(response.data);
+                        }
+                    },
+                    function(response) {
+                        return $q.reject(response.data);
+                    }
+                );
+        }
     };
 }]);
 
-app.service('Reply', ['$http', function($http) {
-    this.reply = function(id, reply, callback) {
-        $http.post('/posts/' + id + '/reply', {
-            reply: reply
-        }).then(
-            function(data, status, headers, config) {
-                console.log(data);
-                callback(data);
-            },
-            function(data, status, headers, config) {
-                console.log(data);
-                callback('error');
-            });
+app.factory('Reply', ['$http', '$q', function($http, $q) {
+    return {
+        reply: function(id, reply) {
+            return $http.post('/posts/' + id + '/reply', {
+                    reply: reply
+                })
+                .then(
+                    function(response) {
+                        if (response.status === 401) {
+                            return $q.reject(response.data);
+                        } else if (typeof response.data === 'object') {
+                            return response.data;
+                        } else {
+                            return $q.reject(response.data);
+                        }
+                    },
+                    function(response) {
+                        return $q.reject(response.data);
+                    }
+                );
+        }
     };
 }]);
 
-app.service('AuthService', ['$http', function($http) {
-    this.login = function(user, callback) {
-        $http.post('/users/login', user).then(
-            function(data, status, headers, config) {
-                callback(data);
-            },
-            function(data, status, headers, config) {
-                var token = "Unauthorized";
-                callback(token);
-            });
-    };
+app.factory('AuthService', ['$http', '$q', function($http, $q) {
+    return {
+        login: function(user) {
+            return $http.post('/users/login', user)
+                .then(
+                    function(response) {
+                        if (response.status === 401) {
+                            return $q.reject('Unauthorized');
+                        } else if (typeof response.data === 'object') {
+                            return response.data;
+                        } else {
+                            return $q.reject(response.data);
+                        }
+                    },
+                    function(response) {
+                        return $q.reject(response.data);
+                    }
+                );
+        },
 
-    this.register = function(user, callback) {
-        $http.post('/users', user).then(
-            function(data, status, headers, config) {
-                callback(data);
-            },
-            function(data, status, headers, config) {
-                console.log(status);
-            });
+        register: function(user) {
+            return $http.post('/users', user)
+                .then(
+                    function(response) {
+                        if (typeof response.data === 'object') {
+                            return response.data;
+                        } else {
+                            return $q.reject(response.data);
+                        }
+                    },
+                    function(response) {
+                        return $q.reject(response.data);
+                    }
+                );
+        }
     };
 }]);
 

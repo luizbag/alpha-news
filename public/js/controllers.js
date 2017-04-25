@@ -4,22 +4,29 @@ app.controller('AuthController', ['AuthService', 'AuthToken', '$window', functio
     var ctrl = this;
 
     ctrl.login = function(user) {
-        AuthService.login(user, function(res) {
-            if (res !== 'Unauthorized') {
-                AuthToken.setToken(res.data.token);
+        AuthService.login(user).then(
+            function(data) {
+                console.log(data);
+                AuthToken.setToken(data.token);
                 user.email = '';
                 user.password = '';
                 $window.location.href = "/";
-            } else {
-                ctrl.error = 'User not found';
+            },
+            function(error) {
+                ctrl.error = 'Invalid credentials';
             }
-        });
+        );
     };
 
     ctrl.register = function(user) {
-        AuthService.register(user, function(user) {
-            $window.location.href = '/';
-        });
+        AuthService.register(user).then(
+            function(data) {
+                $window.location.href = '/';
+            },
+            function(error) {
+                ctrl.error = error;
+            }
+        );
     };
 
     ctrl.logout = function() {
@@ -56,25 +63,19 @@ app.controller('PostController', ['Reply', 'Vote', 'Post', '$window', function(R
     };
 
     ctrl.voteUp = function(id) {
-        Vote.vote(id, function(data) {
-            if (data !== 'error') {
-                ctrl.init();
-            } else {
-                $window.location.href = "/login";
-            }
+        Vote.vote(id).then(function(data) {
+            ctrl.init();
+        }, function(error) {
+            $window.location.href = "/login";
         });
     };
 
     ctrl.addComment = function(reply) {
-        Reply.reply(ctrl.post._id,
-            reply,
-            function(data) {
-                if (data !== 'error') {
-                    ctrl.init();
-                } else {
-                    $window.location.href = "/login";
-                }
-            });
+        Reply.reply(ctrl.post._id, reply).then(function(data) {
+            ctrl.init();
+        }, function(error) {
+            $window.location.href = "/login";
+        });
     };
 
     ctrl.init();
