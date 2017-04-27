@@ -2,6 +2,7 @@
 var express = require('express');
 var router = express.Router();
 var Post = require('../models/Post');
+var User = require('../models/User');
 var auth = require('../auth');
 var request = require('request');
 
@@ -59,7 +60,18 @@ router.post('/:id/vote', auth.authenticate(), function(req, res, next) {
         },
         function(err, post) {
             if (err) return next(err);
-            res.json(post);
+            var user = req.user;
+            if (user.votes.indexOf(post._id) === -1) {
+                user.votes.push(post._id);
+                user.save(function(error) {
+                    if (err) return next(err);
+                    res.json(post);
+                });
+            } else {
+                res.json({
+                    error: "You already upvoted this post"
+                });
+            }
         }
     );
 });

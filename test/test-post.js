@@ -220,4 +220,41 @@ describe('Post', function() {
             });
         });
     });
+
+    it('Should not vote up a post if the user already did an up vote', function(done) {
+        Post.create(testPost, function(err, p) {
+            should.not.exist(err);
+            should.exist(p);
+            authenticate(function(token) {
+                chai.request(server)
+                    .post('/posts/' + p._id + '/vote')
+                    .set('Authorization', 'JWT ' + token)
+                    .send({
+                        vote: 1
+                    })
+                    .end(function(err, res) {
+                        should.not.exist(err);
+                        should.exist(res);
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        chai.request(server)
+                            .post('/posts/' + p._id + '/vote')
+                            .set('Authorization', 'JWT ' + token)
+                            .send({
+                                vote: 1
+                            })
+                            .end(function(err, res) {
+                                should.not.exist(err);
+                                should.exist(res);
+                                res.should.have.status(200);
+                                res.should.be.json;
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('error');
+                                res.body.error.should.equal('You already upvoted this post');
+                                done();
+                            });
+                    });
+            });
+        });
+    });
 });

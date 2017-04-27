@@ -2,17 +2,32 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
 var UserSchema = new mongoose.Schema({
-    nickname: {type: String, required: true, unique: true},
-    email: {type: String, required: true, unique: true},
-    password: {type: String, required: true}
+    nickname: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
+});
+
+UserSchema.add({
+    votes: [mongoose.Schema.Types.ObjectId]
 });
 
 UserSchema.pre('save', function(next) {
     var user = this;
-    if(!user.isModified('password')) return next();
+    if (!user.isModified('password')) return next();
 
     bcrypt.hash(user.password, null, null, function(err, hash) {
-        if(err) return next(err);
+        if (err) return next(err);
         user.password = hash;
         next();
     });
@@ -20,7 +35,7 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.methods.comparePassword = function(password, cb) {
     bcrypt.compare(password, this.password, function(err, match) {
-        if(err) return cb(err);
+        if (err) return cb(err);
         cb(match);
     });
 };
