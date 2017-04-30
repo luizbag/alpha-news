@@ -49,31 +49,26 @@ router.post('/', auth.authenticate(), function(req, res, next) {
 });
 
 router.post('/:id/vote', auth.authenticate(), function(req, res, next) {
-    Post.findByIdAndUpdate(req.params.id, {
-            $inc: {
-                points: 1
-            }
-        }, {
-            safe: true,
-            upsert: true,
-            new: true
-        },
-        function(err, post) {
+    Post.findById(req.params.id, function(err, post) {
+        if (err) return next(err);
+        User.findById(req.user._id, function(err, user) {
             if (err) return next(err);
-            var user = req.user;
             if (user.votes.indexOf(post._id) === -1) {
                 user.votes.push(post._id);
                 user.save(function(error) {
-                    if (err) return next(err);
-                    res.json(post);
+                    if (error) return next(err);
+                    post.points += 1;
+                    post.save(function(e, p) {
+                        res.json(p);
+                    });
                 });
             } else {
                 res.json({
                     error: "You already upvoted this post"
                 });
             }
-        }
-    );
+        });
+    });
 });
 
 router.post('/:id/reply', auth.authenticate(), function(req, res, next) {
